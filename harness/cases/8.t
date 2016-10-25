@@ -9,12 +9,14 @@ long long get_fs_limit(int fd)
 {
 	long long min = 0, max = 9223372036854775807LL;
 	char c = 0;
+	int ret;
 
 	while (max - min > 1) {
 		if (pwrite64(fd, &c, 1, (min + max) / 2) == -1)
 			max = (min + max) / 2;
 		else {
-			ftruncate(fd, 0);
+			ret = ftruncate(fd, 0);
+			assert(ret == 0);
 			min = (min + max) / 2;
 		}
 	}

@@ -91,7 +91,8 @@ test_main(void)
 	assert(fd != -1);
 
 	memset(buffer, FILEPATTERN, PAGE_SIZE);
-	write(fd, buffer, PAGE_SIZE);
+	ret = write(fd, buffer, PAGE_SIZE);
+	assert(ret == PAGE_SIZE);
 	close(fd);
 
 	for (i = 0; i < THREADS_NUM; i++) {
