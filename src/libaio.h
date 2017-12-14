@@ -119,7 +119,9 @@ struct io_iocb_vector {
 
 struct iocb {
 	PADDEDptr(void *data, __pad1);	/* Return in the io completion event */
-	PADDED(unsigned key, __pad2);	/* For use in identifying io requests */
+	/* key: For use in identifying io requests */
+	/* aio_rw_flags: RWF_* flags (such as RWF_NOWAIT) */
+	PADDED(unsigned key, aio_rw_flags);
 
 	short		aio_lio_opcode;	
 	short		aio_reqprio;
@@ -205,6 +207,30 @@ static inline void io_prep_pwritev(struct iocb *iocb, int fd, const struct iovec
 	iocb->aio_fildes = fd;
 	iocb->aio_lio_opcode = IO_CMD_PWRITEV;
 	iocb->aio_reqprio = 0;
+	iocb->u.c.buf = (void *)iov;
+	iocb->u.c.nbytes = iovcnt;
+	iocb->u.c.offset = offset;
+}
+
+static inline void io_prep_preadv2(struct iocb *iocb, int fd, const struct iovec *iov, int iovcnt, long long offset, int flags)
+{
+	memset(iocb, 0, sizeof(*iocb));
+	iocb->aio_fildes = fd;
+	iocb->aio_lio_opcode = IO_CMD_PREADV;
+	iocb->aio_reqprio = 0;
+	iocb->aio_rw_flags = flags;
+	iocb->u.c.buf = (void *)iov;
+	iocb->u.c.nbytes = iovcnt;
+	iocb->u.c.offset = offset;
+}
+
+static inline void io_prep_pwritev2(struct iocb *iocb, int fd, const struct iovec *iov, int iovcnt, long long offset, int flags)
+{
+	memset(iocb, 0, sizeof(*iocb));
+	iocb->aio_fildes = fd;
+	iocb->aio_lio_opcode = IO_CMD_PWRITEV;
+	iocb->aio_reqprio = 0;
+	iocb->aio_rw_flags = flags;
 	iocb->u.c.buf = (void *)iov;
 	iocb->u.c.nbytes = iovcnt;
 	iocb->u.c.offset = offset;
