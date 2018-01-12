@@ -2,10 +2,16 @@
 #include <unistd.h>
 #include <sys/syscall.h>
 
-#define _body_io_syscall(sname, args...) \
-{ \
-	int ret = syscall(__NR_##sname, ## args); \
-	return ret < 0 ? -errno : ret; \
+#define _body_io_syscall(sname, args...)	\
+{						\
+	int ret, saved_errno;			\
+	saved_errno = errno;			\
+	ret= syscall(__NR_##sname, ## args);	\
+	if (ret < 0) {				\
+		ret = -errno;			\
+		errno = saved_errno;		\
+	}					\
+	return ret;				\
 }
 
 #define io_syscall1(type,fname,sname,type1,arg1) \
