@@ -41,7 +41,7 @@ open_temp_file(void)
 	int fd;
 	char template[sizeof(TEMPLATE)];
 
-	strncpy(template, TEMPLATE, sizeof(TEMPLATE));
+	strncpy(template, TEMPLATE, sizeof(template));
 	fd = mkostemp(template, O_DIRECT);
 	if (fd < 0) {
 		perror("mkstemp");
