@@ -43,7 +43,7 @@ open_temp_file()
 	int fd;
 	char temp_file[sizeof(TEMPLATE)];
 
-	strncpy(temp_file, TEMPLATE, sizeof(TEMPLATE));
+	strncpy(temp_file, TEMPLATE, sizeof(tempfile));
 	fd = mkstemp(temp_file);
 	if (fd < 0) {
 		perror("mkstemp");
